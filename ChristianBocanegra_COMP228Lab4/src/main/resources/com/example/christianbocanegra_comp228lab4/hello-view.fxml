@@ -1,16 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.christianbocanegra_comp228lab4.HelloController">
+<GridPane fx:controller="com.example.christianbocanegra_comp228lab4.HelloController"
+          xmlns:fx="http://javafx.com/fxml"
+          hgap="10" vgap="10">
+
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        <Insets top="10" right="10" bottom="10" left="10"/>
     </padding>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+    <!-- Definir las restricciones de columnas -->
+    <columnConstraints>
+        <!-- Primera columna: Labels, tamaño fijo -->
+        <ColumnConstraints minWidth="100" halignment="RIGHT"/>
+        <!-- Segunda columna: Campos de texto, que crece con el contenido -->
+        <ColumnConstraints minWidth="200" hgrow="ALWAYS"/>
+        <!-- Tercera columna: Checkboxes y otras opciones -->
+        <ColumnConstraints minWidth="150" halignment="LEFT"/>
+        <!-- Cuarta columna: Botones de radio, ComboBox, ListView -->
+        <ColumnConstraints minWidth="150" hgrow="ALWAYS"/>
+        <ColumnConstraints minWidth="100" hgrow="ALWAYS"/>
+    </columnConstraints>
+
+    <!-- Columna 1: Labels y Campos de Texto -->
+    <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.halignment="LEFT"/>
+    <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+    <Label text="Address:" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.halignment="LEFT"/>
+    <TextField fx:id="addressField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+    <Label text="Province:" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.halignment="LEFT"/>
+    <TextField fx:id="provinceField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+    <Label text="City:" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.halignment="LEFT"/>
+    <TextField fx:id="cityField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+    <Label text="Postal Code:" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.halignment="LEFT"/>
+    <TextField fx:id="postalCodeField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+    <Label text="Phone Number:" GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.halignment="LEFT"/>
+    <TextField fx:id="phoneField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+    <Label text="Email:" GridPane.rowIndex="6" GridPane.columnIndex="0" GridPane.halignment="LEFT"/>
+    <TextField fx:id="emailField" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+    <!-- Checkboxes para actividades -->
+    <CheckBox fx:id="studentCouncilCheck" text="Student Council" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+    <CheckBox fx:id="volunteerWorkCheck" text="Volunteer Work" GridPane.rowIndex="5" GridPane.columnIndex="2"/>
+
+    <!-- RadioButtons para seleccionar Major -->
+    <RadioButton fx:id="csRadio" text="Computer Science" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+    <RadioButton fx:id="businessRadio" text="Business" GridPane.rowIndex="0" GridPane.columnIndex="4"/>
+
+    <!-- ComboBox para seleccionar cursos y lista de cursos -->
+    <ComboBox fx:id="courseComboBox" GridPane.rowIndex="3" GridPane.columnIndex="3" GridPane.columnSpan="4"/>
+   <ListView fx:id="courseListView" GridPane.rowIndex="4" GridPane.columnIndex="3" GridPane.rowSpan="2"/>
+
+    <!-- Botón para mostrar la información -->
+    <Button text="Display" onAction="#displayInfo" GridPane.rowIndex="7" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER"/>
+
+
+
+    <!-- Área de texto para mostrar los resultados -->
+    <!--<TextArea fx:id="displayArea" GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="5"/>-->
+    <TextArea fx:id="displayArea" GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="5" wrapText="true" prefHeight="150"/>
+
+</GridPane>

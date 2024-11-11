@@ -27,5 +27,7 @@ public class PriceCalculator {
         double totalPrice3 = calculateTotalPrice(100.0, 15.0, true);
         System.out.println("Total price of a product with a 15% tax (without discounts): $" + totalPrice3);
     }
+
+
 }
 

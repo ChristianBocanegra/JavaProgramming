@@ -52,6 +52,7 @@ public class Lotto {
 
             boolean userWin = false;
 
+
             for (int i = 0; i < 5; i++) {
                 Lotto lotto = new Lotto();
                 int[] numbers = lotto.getNumbers();

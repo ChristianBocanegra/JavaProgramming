@@ -25,8 +25,8 @@ public class HelloController {
     @FXML
     private TextArea displayArea;
 
-    private ObservableList<String> csCourses = FXCollections.observableArrayList("Java", "Python", "C#");
-    private ObservableList<String> businessCourses = FXCollections.observableArrayList("Finance", "Marketing", "Management");
+    private ObservableList<String> csCourses = FXCollections.observableArrayList("Java", "Python", "C#", "JavaScript", "PHP");
+    private ObservableList<String> businessCourses = FXCollections.observableArrayList("Economics", "International Business", "Digital Marketing", "Business Communication");
 
     @FXML
     public void initialize() {

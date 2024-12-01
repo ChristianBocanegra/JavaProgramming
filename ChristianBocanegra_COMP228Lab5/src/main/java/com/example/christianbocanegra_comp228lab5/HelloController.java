@@ -43,6 +43,7 @@ public class HelloController {
     @FXML private TableColumn<Games, String> gameTitleColumn;
     @FXML private TableColumn<Games, String> playingDateColumn;
     @FXML private TableColumn<Games, String> scoreColumn;
+    @FXML private TableColumn<Player, Integer> playerIdColumnInGameTable;
 
     // Connection object to interact with the database
     private Connection dbConnection;
@@ -86,6 +87,10 @@ public class HelloController {
         gameTitleColumn.setCellValueFactory(new PropertyValueFactory<>("gameTitle"));
         playingDateColumn.setCellValueFactory(new PropertyValueFactory<>("playingDate"));
         scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
+
+
+        playerIdColumnInGameTable.setCellValueFactory(new PropertyValueFactory<>("playerId"));
+
     }
 
     // Method to load players from the database and populate the player list
@@ -443,9 +448,10 @@ public class HelloController {
         playerTable.getItems().clear();
         gameTable.getItems().clear();
         initializeComboBox();
+        loadAllGames(); // Carga todos los juegos inicialmente
 
         // Fetch player data from the database and populate the playerTable
-        try (PreparedStatement stmt = dbConnection.prepareStatement("SELECT * FROM Christian_Bocanegra_player order by 1 asc");
+        try (PreparedStatement stmt = dbConnection.prepareStatement("SELECT * FROM Christian_Bocanegra_player ORDER BY 1 ASC");
              ResultSet rs = stmt.executeQuery()) {
 
             ObservableList<Player> players = FXCollections.observableArrayList();
@@ -466,18 +472,14 @@ public class HelloController {
             // Populate playerTable with retrieved data
             playerTable.setItems(players);
 
-            // Automatically select the first player in the playerTable
-            if (!players.isEmpty()) {
-                playerTable.getSelectionModel().select(0);
-                Player firstPlayer = playerTable.getSelectionModel().getSelectedItem();
-                fetchGamesForPlayer(firstPlayer.getPlayerId()); // Load games for the first player
-            }
-
             // Add selection listener to update the gameTable when a player is selected
             playerTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     // Fetch game data for the selected player
                     fetchGamesForPlayer(newValue.getPlayerId());
+                } else {
+                    // Si no hay selección, muestra todos los juegos
+                    loadAllGames();
                 }
             });
 
@@ -487,30 +489,30 @@ public class HelloController {
         }
     }
 
-    // Fetches game data for the specified player and updates the game table
+
     private void fetchGamesForPlayer(int playerId) {
-        // Clear previous data in the gameTable
-        gameTable.getItems().clear();
+        String gameQuery = "SELECT a.player_id, b.game_title, a.playing_date, a.score " +
+                "FROM Christian_B_PlayerAndGame a " +
+                "JOIN Christian_Bocanegra_Mape_game b ON a.game_id = b.game_id " +
+                "WHERE a.player_id = ?";
 
-        // Fetch game data based on the selected player ID
-        String gameQuery = "SELECT b.game_title, a.playing_date, a.score FROM Christian_B_PlayerAndGame a " +
-                "JOIN Christian_Bocanegra_Mape_game b ON a.game_id = b.game_id WHERE a.player_id = ?";
+        try (PreparedStatement stmt = dbConnection.prepareStatement(gameQuery)) {
+            stmt.setInt(1, playerId);
 
-        try (PreparedStatement stmt2 = dbConnection.prepareStatement(gameQuery)) {
-            stmt2.setInt(1, playerId); // Set the player ID in the query
-            try (ResultSet rs2 = stmt2.executeQuery()) {
+            try (ResultSet rs = stmt.executeQuery()) {
                 ObservableList<Games> games = FXCollections.observableArrayList();
 
-                while (rs2.next()) {
+                while (rs.next()) {
                     Games game = new Games(
-                            rs2.getString("game_title"),      // Assuming game_title is a String
-                            rs2.getDate("playing_date"),      // Assuming playing_date is a Date
-                            rs2.getInt("score")               // Assuming score is an integer
+                            rs.getInt("player_id"),  // Use the same player_id
+                            rs.getString("game_title"),
+                            rs.getDate("playing_date"),
+                            rs.getInt("score")
                     );
                     games.add(game);
                 }
 
-                // Populate the gameTable with the retrieved data
+                // Populate gameTable with filtered data
                 gameTable.setItems(games);
 
             } catch (SQLException e) {
@@ -523,8 +525,6 @@ public class HelloController {
             showError("SQL Error in fetching game data for selected player: " + e.getMessage());
         }
     }
-
-
 
 
 
@@ -620,6 +620,38 @@ public class HelloController {
             }
         }
     }
+
+    @FXML
+    private void loadAllGames() {
+        String query = "SELECT a.player_id, b.game_title, a.playing_date, a.score " +
+                "FROM Christian_B_PlayerAndGame a " +
+                "JOIN Christian_Bocanegra_Mape_game b ON a.game_id = b.game_id";
+
+        try (PreparedStatement stmt = dbConnection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            ObservableList<Games> games = FXCollections.observableArrayList();
+
+            while (rs.next()) {
+                Games game = new Games(
+                        rs.getInt("player_id"),
+                        rs.getString("game_title"),
+                        rs.getDate("playing_date"),
+                        rs.getInt("score")
+                );
+                games.add(game);
+            }
+
+            // Populate gameTable with all game data
+            gameTable.setItems(games);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showError("SQL Error in loading all games: " + e.getMessage());
+        }
+    }
+
+
 
 
 }

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-        <?import javafx.geometry.Insets?>
-        <?import javafx.scene.control.*?>
-        <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 
 <TabPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.171"
@@ -10,7 +8,7 @@
 
     <Tab text="Registration">
         <VBox alignment="CENTER">
-            <GridPane hgap="2" vgap="15" alignment="TOP_CENTER">
+            <GridPane hgap="2" vgap="20" alignment="TOP_CENTER">
                 <columnConstraints>
                     <ColumnConstraints percentWidth="5"/>
                     <ColumnConstraints percentWidth="10"/>
@@ -62,7 +60,7 @@
 
     <!-- Update -->
     <Tab text="Update Player">
-            <GridPane hgap="2" vgap="15">
+            <GridPane hgap="2" vgap="20">
                 <columnConstraints>
                     <ColumnConstraints percentWidth="20"/>
                     <ColumnConstraints percentWidth="10"/>
@@ -91,28 +89,26 @@
 
     <!-- Display Tab -->
     <Tab text="Display Information" onSelectionChanged="#onDisplayInformationTabSelected">
-        <VBox spacing="20" alignment="CENTER">
-            <HBox spacing="10">
-                <Label text="Player ID:" />
-                <ComboBox fx:id="playerIdComboBox" onAction="#onPlayerIdSelected" prefWidth="200.0" />
-
-            </HBox>
+         <VBox spacing="15" alignment="CENTER">
+                <Label  text="Player ID:" style="-fx-font-weight: bold;"/>
+                <ComboBox fx:id="playerIdComboBox" onAction="#onPlayerIdSelected" prefWidth="250.0" />
             <TableView fx:id="playerTable">
                 <columns>
-                    <TableColumn text="Player ID" fx:id="playerIdColumn" />
-                    <TableColumn text="First Name" fx:id="firstNameColumn" prefWidth="140"/>
-                    <TableColumn text="Last Name" fx:id="lastNameColumn" prefWidth="140" />
-                    <TableColumn text="Address" fx:id="addressColumn" prefWidth="200"/>
+                    <TableColumn text="Player ID" fx:id="playerIdColumn" prefWidth="70"/>
+                    <TableColumn text="First Name" fx:id="firstNameColumn" prefWidth="120"/>
+                    <TableColumn text="Last Name" fx:id="lastNameColumn" prefWidth="120" />
+                    <TableColumn text="Address" fx:id="addressColumn" prefWidth="150"/>
                     <TableColumn text="Postal Code" fx:id="postalCodeColumn" />
-                    <TableColumn text="Province" fx:id="provinceColumn" />
+                    <TableColumn text="Province" fx:id="provinceColumn" prefWidth="70"/>
                     <TableColumn text="Phone Number" fx:id="phoneNumberColumn" prefWidth="150" />
                 </columns>
             </TableView>
             <TableView fx:id="gameTable">
                 <columns>
+                    <TableColumn text="Player ID" fx:id="playerIdColumnInGameTable" prefWidth="70" />
                     <TableColumn text="Game Title" fx:id="gameTitleColumn" prefWidth="150" />
-                    <TableColumn text="Playing Date" fx:id="playingDateColumn" />
-                    <TableColumn text="Score" fx:id="scoreColumn" />
+                    <TableColumn text="Playing Date" fx:id="playingDateColumn" prefWidth="100"/>
+                    <TableColumn text="Score" fx:id="scoreColumn" prefWidth="100"/>
                 </columns>
             </TableView>
         </VBox>

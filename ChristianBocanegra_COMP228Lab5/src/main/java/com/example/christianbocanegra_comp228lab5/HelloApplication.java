@@ -11,15 +11,13 @@ import java.sql.SQLException;
 
 public class HelloApplication extends Application {
 
-    //Utility class for database connection.
+    // Utility class for managing database connections.
     public static class DatabaseConnector {
-        private static final String URL = "jdbc:oracle:thin:@199.212.26.208:1521:SQLD";
-        private static final String USER = "COMP214_F24_er_5";
-        private static final String PASSWORD = "password";
+        private static final String URL = "jdbc:oracle:thin:@199.212.26.208:1521:SQLD"; // Database URL
+        private static final String USER = "COMP214_F24_er_5"; // Database username
+        private static final String PASSWORD = "password"; // Database password
 
-
-
-        // Establishes a connection to the database.
+        // Establishes and returns a connection to the database.
         public static Connection connect() throws SQLException {
             try {
                 return DriverManager.getConnection(URL, USER, PASSWORD);
@@ -30,34 +28,27 @@ public class HelloApplication extends Application {
         }
     }
 
-    // The main entry point for JavaFX application.
+    // Entry point for the JavaFX application. Sets up the user interface.
     @Override
     public void start(Stage stage) throws IOException {
-
-        // Load the FXML layout file
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 850, 600);
-
-        // Set the stage title and scene
-        stage.setTitle("Player Game Info");
-        stage.setScene(scene);
-
-        // Display the application window
-        stage.show();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml")); // Load the FXML file
+        Scene scene = new Scene(fxmlLoader.load(), 850, 600); // Create a Scene with specified dimensions
+        stage.setTitle("Player Game Info"); // Set the title of the window
+        stage.setScene(scene); // Attach the scene to the stage
+        stage.show(); // Display the stage
     }
 
-    //The main method, entry point of the application.
+    // Main method: Entry point for launching the application.
     public static void main(String[] args) {
         try {
-            // Test database connection at startup
+            // Attempt to connect to the database at startup
             Connection connection = DatabaseConnector.connect();
-            System.out.println("Database connected successfully!");
-            connection.close();
+            System.out.println("Database connected"); // Log success message
+            connection.close(); // Close the connection after testing
         } catch (SQLException e) {
-            System.err.println("Failed to connect to the database: " + e.getMessage());
+            System.err.println("Failed to connect to the database: " + e.getMessage()); // Log failure message
         }
 
-        // Launch the JavaFX application
-        launch();
+        launch(); // Start the JavaFX application
     }
 }

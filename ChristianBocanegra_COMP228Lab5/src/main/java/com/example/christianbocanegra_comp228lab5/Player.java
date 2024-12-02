@@ -2,7 +2,7 @@ package com.example.christianbocanegra_comp228lab5;
 
 public class Player {
 
-    //Player information fields
+    // Fields to store player details
     private int playerId;
     private String firstName;
     private String lastName;
@@ -22,7 +22,7 @@ public class Player {
         this.phoneNumber = phoneNumber;
     }
 
-    // Getters
+    // Getters to retrieve values of the fields
     public int getPlayerId() { return playerId; }
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }

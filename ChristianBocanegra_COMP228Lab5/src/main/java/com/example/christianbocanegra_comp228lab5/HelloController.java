@@ -45,18 +45,16 @@ public class HelloController {
     @FXML private TableColumn<Games, String> scoreColumn;
     @FXML private TableColumn<Player, Integer> playerIdColumnInGameTable;
 
-    // Connection object to interact with the database
+
     private Connection dbConnection;
 
-    // ObservableLists to hold player and game data.
     private ObservableList<String> playerList = FXCollections.observableArrayList();
     private ObservableList<String> gameList = FXCollections.observableArrayList();
 
-    // Constructor for HelloController
+
     public HelloController() {
         try {
 
-            // Attempts to establish a connection to the database when the controller is created.
             dbConnection = HelloApplication.DatabaseConnector.connect();
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,19 +62,16 @@ public class HelloController {
         }
     }
 
-    // Initialize method: Called when the controller is loaded to set up components
     @FXML
     public void initialize() {
-        // Load players and games into the list
+
         loadPlayers();
         loadGames();
 
-        // Set the items for combo boxes using the loaded lists
         playerIdScoreComboBox.setItems(playerList);
         playerIdUpdatePlayerComboBox.setItems(playerList);
         gameIdScoreComboBox.setItems(gameList);
 
-        // Set up TableView columns
         playerIdColumn.setCellValueFactory(new PropertyValueFactory<>("playerId"));
         firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
@@ -93,22 +88,19 @@ public class HelloController {
 
     }
 
-    // Method to load players from the database and populate the player list
     private void loadPlayers() {
-        playerList.clear(); // Clear any existing data in the player list
+        playerList.clear();
         try {
             String query = "SELECT player_id, first_name, last_name FROM Christian_Bocanegra_player order by 1 asc";
             PreparedStatement stmt = dbConnection.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 
-            // Process each player returned from the query
             while (rs.next()) {
                 int playerId = rs.getInt("player_id");
                 String fullName = rs.getString("first_name") + " " + rs.getString("last_name");
                 playerList.add(playerId + " - " + fullName);
             }
 
-            // Check if no players were found
             if (playerList.isEmpty()) {
                 showError("No players found.");
             }
@@ -118,7 +110,6 @@ public class HelloController {
         }
     }
 
-    // Method to load games from the database and populate the game list
     private void loadGames() {
         gameList.clear();
         try {
@@ -126,14 +117,12 @@ public class HelloController {
             PreparedStatement stmt = dbConnection.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 
-            // Process each game returned from the query
             while (rs.next()) {
                 int gameId = rs.getInt("game_id");
                 String gameName = rs.getString("game_title");
                 gameList.add(gameId + " - " + gameName);
             }
 
-            // Check if no games were found
             if (gameList.isEmpty()) {
                 showError("No Games found.");
             }
@@ -143,23 +132,19 @@ public class HelloController {
         }
     }
 
-    // Handles the registration of a new player
     @FXML
     private void onSubmitRegisterPlayer(ActionEvent event) {
         try {
 
-            // Check if required fields are empty
             if (registerFirstNameField.getText().isEmpty() || registerLastNameField.getText().isEmpty()) {
                 showError("First Name and Last Name are required.");
                 return;
             }
 
-            // Prepare SQL query to insert new player into the database
             String query = "INSERT INTO Christian_Bocanegra_player (first_name, last_name, address, postal_code, province, phone_number) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = dbConnection.prepareStatement(query);
 
-            // Set query parameters from user input
             stmt.setString(1, registerFirstNameField.getText());
             stmt.setString(2, registerLastNameField.getText());
             stmt.setString(3, registerAddressField.getText());
@@ -167,13 +152,10 @@ public class HelloController {
             stmt.setString(5, registerProvinceField.getText());
             stmt.setString(6, registerPhoneNumberField.getText());
 
-            // Execute the query
             stmt.executeUpdate();
             showMessage("Player registered successfully.");
-
-            // Clear input fields and refresh the player list
             clearRegisterPlayerFields();
-            loadPlayers(); // Refresh player list
+            loadPlayers();
         } catch (SQLException e) {
             e.printStackTrace();
             showError("SQL Error in registering player: " + e.getMessage());
@@ -191,7 +173,7 @@ public class HelloController {
         registerPhoneNumberField.clear();
     }
 
-    // Handles the selection of a player from a ComboBox
+
     @FXML
     private void onPlayerSelection(ActionEvent event) {
         ComboBox<String> source = (ComboBox<String>) event.getSource();
@@ -204,14 +186,12 @@ public class HelloController {
         }
     }
 
-    // Extracts the player ID from the ComboBox selection
     private int extractPlayerIdFromComboBox(String selectedPlayer) {
         String[] parts = selectedPlayer.split(" - ");
         String playerIdString = parts[0].trim();
         return Integer.parseInt(playerIdString);
     }
 
-    // Populates player details into appropriate fields based on the selected player ID
     private void populatePlayerDetails(int playerId, ComboBox<String> sourceComboBox) {
         try {
             String query = "SELECT * FROM Christian_Bocanegra_player  WHERE player_id = ?";
@@ -219,7 +199,6 @@ public class HelloController {
             stmt.setInt(1, playerId);
             ResultSet rs = stmt.executeQuery();
 
-            // Fill the fields if data is found
             if (rs.next()) {
                 if (sourceComboBox == playerIdUpdatePlayerComboBox) {
                     updateFirstNameField.setText(rs.getString("first_name"));
@@ -236,30 +215,24 @@ public class HelloController {
         }
     }
 
-    // Handles the registration of a new game
     @FXML
     private void onSubmitRegisterGame(ActionEvent event) {
         try {
 
-            // Check if the game title field is empty
             if (titleField.getText().isEmpty()) {
                 showError("Game's title is required.");
                 return;
             }
 
-            // Prepare SQL query to insert new game into the database
             String query = "INSERT INTO Christian_Bocanegra_Mape_game (game_title) " +
                     "VALUES (?)";
             PreparedStatement stmt = dbConnection.prepareStatement(query);
             stmt.setString(1, titleField.getText());
 
-            // Execute the query
             stmt.executeUpdate();
             showMessage("Game registered successfully.");
-
-            // Clear input fields and refresh the game list
             clearRegisterGameFields();
-            loadGames(); // Refresh player list
+            loadGames();
         } catch (SQLException e) {
             e.printStackTrace();
             showError("SQL Error in registering game: " + e.getMessage());
@@ -272,7 +245,6 @@ public class HelloController {
         titleField.clear();
     }
 
-    // Handles the selection of a game from the ComboBox
     @FXML
     private void onGameSelection(ActionEvent event) {
         ComboBox<String> source = (ComboBox<String>) event.getSource();
@@ -285,14 +257,12 @@ public class HelloController {
         }
     }
 
-    // Extracts the game ID from the ComboBox selection string
     private int extractGameIdFromComboBox(String selectedGame) {
         String[] parts = selectedGame.split(" - ");
         String gameIdString = parts[0].trim();
         return Integer.parseInt(gameIdString);
     }
 
-    // Populates game details into appropriate fields based on the selected game ID
     private void populateGameDetails(int gameId, ComboBox<String> sourceComboBox) {
         try {
             String query = "SELECT * FROM Christian_Bocanegra_Mape_game WHERE game_id = ?";
@@ -300,7 +270,6 @@ public class HelloController {
             stmt.setInt(1, gameId);
             ResultSet rs = stmt.executeQuery();
 
-            // Fill the fields if data is found
             if (rs.next()) {
                 if (sourceComboBox == gameIdScoreComboBox) {
                     titleField.setText(rs.getString("game_title"));
@@ -313,39 +282,32 @@ public class HelloController {
     }
 
 
-    // Handles the submission of a score entry for a player and game
     @FXML
     private void onSubmitScore(ActionEvent event) {
         try {
-            // Validate if the DatePicker or scoreField is empty
             if (playingDatePicker.getValue() == null || scoreField.getText().isEmpty()) {
                 showError("Playing Date and Score are required.");
                 return;
             }
 
-            // Validate the selected Player from the ComboBox
             String selectedPlayer = playerIdScoreComboBox.getValue();
             if (selectedPlayer == null || selectedPlayer.isEmpty()) {
                 showError("Please select a Player.");
                 return;
             }
 
-            // Validate the selected Game from the ComboBox
             String selectedGame = gameIdScoreComboBox.getValue();
             if (selectedGame == null || selectedGame.isEmpty()) {
                 showError("Please select a Game.");
                 return;
             }
 
-            // Extract IDs from ComboBox selections
             int selectedPlayerId = extractPlayerIdFromComboBox(selectedPlayer);
             int selectedGameId = extractGameIdFromComboBox(selectedGame);
 
-            // Convert LocalDate from DatePicker to java.sql.Date
             LocalDate playingDate = playingDatePicker.getValue();
             java.sql.Date sqlDate = java.sql.Date.valueOf(playingDate);
 
-            // Prepare and execute the SQL query
             String query = "INSERT INTO Christian_B_PlayerAndGame (game_id, player_id, playing_date, score) " +
                     "VALUES (?, ?, ?, ?)";
             PreparedStatement stmt = dbConnection.prepareStatement(query);
@@ -375,11 +337,9 @@ public class HelloController {
         gameIdScoreComboBox.getSelectionModel().clearSelection();
     }
 
-    // Updates player details based on input from the update form
     @FXML
     private void onUpdatePlayer(ActionEvent event) {
 
-        // Validate the selected Player from the ComboBox
         String selectedPlayer = playerIdUpdatePlayerComboBox.getValue();
         if (selectedPlayer == null || selectedPlayer.isEmpty()) {
             showError("Please select a Player to update.");
@@ -388,7 +348,6 @@ public class HelloController {
 
         int selectedPlayerId = extractPlayerIdFromComboBox(selectedPlayer);
 
-        // Get the input values
         String firstName = updateFirstNameField.getText();
         String lastName = updateLastNameField.getText();
         String address = updateAddressField.getText();
@@ -396,14 +355,12 @@ public class HelloController {
         String province = updateProvinceField.getText();
         String phoneNumber = updatePhoneNumberField.getText();
 
-        // Validate the input values
         if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || postalCode.isEmpty()
                 || province.isEmpty() || phoneNumber.isEmpty()) {
             showError("All fields must be filled out to update the player's information.");
             return;
         }
 
-        // SQL query to update the player record
         String updateQuery = "UPDATE Christian_Bocanegra_player SET first_name = ?, last_name = ?, address = ?, postal_code = ?, " +
                 "province = ?, phone_number = ? WHERE player_id = ?";
 
@@ -416,7 +373,6 @@ public class HelloController {
             preparedStatement.setString(6, phoneNumber);
             preparedStatement.setInt(7, selectedPlayerId);  // Use the integer player ID
 
-            // Execute the update
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
                 showMessage("Player information updated successfully.");
@@ -440,17 +396,14 @@ public class HelloController {
         updatePhoneNumberField.clear();
     }
 
-
-    // Handles the selection of the Information tab, populating the player and game tables
     @FXML
     public void onDisplayInformationTabSelected() {
-        // Clear previous data in the TableViews
+
         playerTable.getItems().clear();
         gameTable.getItems().clear();
         initializeComboBox();
-        loadAllGames(); // Carga todos los juegos inicialmente
+        loadAllGames();
 
-        // Fetch player data from the database and populate the playerTable
         try (PreparedStatement stmt = dbConnection.prepareStatement("SELECT * FROM Christian_Bocanegra_player ORDER BY 1 ASC");
              ResultSet rs = stmt.executeQuery()) {
 
@@ -469,16 +422,11 @@ public class HelloController {
                 players.add(player);
             }
 
-            // Populate playerTable with retrieved data
             playerTable.setItems(players);
-
-            // Add selection listener to update the gameTable when a player is selected
             playerTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    // Fetch game data for the selected player
                     fetchGamesForPlayer(newValue.getPlayerId());
                 } else {
-                    // Si no hay selección, muestra todos los juegos
                     loadAllGames();
                 }
             });
@@ -504,7 +452,7 @@ public class HelloController {
 
                 while (rs.next()) {
                     Games game = new Games(
-                            rs.getInt("player_id"),  // Use the same player_id
+                            rs.getInt("player_id"),
                             rs.getString("game_title"),
                             rs.getDate("playing_date"),
                             rs.getInt("score")
@@ -512,7 +460,6 @@ public class HelloController {
                     games.add(game);
                 }
 
-                // Populate gameTable with filtered data
                 gameTable.setItems(games);
 
             } catch (SQLException e) {
@@ -526,9 +473,6 @@ public class HelloController {
         }
     }
 
-
-
-    // Displays an error message in an alert dialog
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -537,7 +481,6 @@ public class HelloController {
         alert.showAndWait();
     }
 
-    // Displays an informational message in an alert dialog
     private void showMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");
@@ -562,13 +505,10 @@ public class HelloController {
                 int playerId = rs.getInt("player_id");
                 String firstName = rs.getString("first_name");
                 String lastName = rs.getString("last_name");
-
-                // Concatenar información para el ComboBox
                 String displayValue = playerId + " - " + firstName + " " + lastName;
                 playerOptions.add(displayValue);
             }
 
-            // Configurar el ComboBox con las opciones generadas
             playerIdComboBox.setItems(playerOptions);
 
         } catch (SQLException e) {
@@ -641,8 +581,6 @@ public class HelloController {
                 );
                 games.add(game);
             }
-
-            // Populate gameTable with all game data
             gameTable.setItems(games);
 
         } catch (SQLException e) {
